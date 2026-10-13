@@ -163,7 +163,12 @@ export default function AccountPage() {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers.Authorization = `Bearer ${token}`;
 
-      const bookId = reservation.book?.id ?? reservation.book_id;
+      const bookId = reservation.book_id ?? reservation.book?.id;
+      console.log('Reservation data', reservation);
+
+
+      console.log('bookId', bookId);
+
       if (!bookId) {
         alert('Unable to determine book ID for reservation');
         return;
@@ -171,17 +176,26 @@ export default function AccountPage() {
       const loanRes = await fetch('/api/account/loans', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ book_id: bookId }),
+        body: JSON.stringify({ book_id: String(bookId) }),
       });
+      if (!loanRes.ok) {
+        const err = await loanRes.json().catch(() => ({}));
+        alert(err.error || `Failed to create loan (status ${loanRes.status})`);
+        return;
+      }
+
       const loanResult = await loanRes.json();
       if (loanResult.success && loanResult.loan) {
-        // Optimistically update UI: add loan and mark reservation cancelled
+        // Delete reservation after booking
+        await fetch(`/api/account/reservations?id=${reservation.id}`, {
+          method: 'DELETE',
+          headers,
+        }).catch(() => {});
+        // Optimistically update UI: add loan and remove reservation
         setData(prev => prev ? {
           ...prev,
           loans: [...prev.loans, loanResult.loan],
-          reservations: prev.reservations.map((r: any) =>
-            r.id === reservation.id ? { ...r, status: 'cancelled' } : r
-          ),
+          reservations: prev.reservations.filter((r: any) => r.id !== reservation.id),
         } : prev);
       } else {
         alert(loanResult.error || 'Failed to book the reservation');

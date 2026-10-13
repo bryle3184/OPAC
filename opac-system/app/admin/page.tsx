@@ -79,13 +79,13 @@ export default function AdminPage() {
   async function loadUsers() {
     setUsersLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('id, library_card_number, name, role, is_active, created_at')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setAdminUsers(data ?? []);
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      const res = await fetch('/api/admin/users', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to load users');
+      setAdminUsers(data.users ?? []);
     } catch (err: any) {
       setRoleError(err.message);
     } finally {
@@ -185,34 +185,50 @@ export default function AdminPage() {
   }
 
   async function updateUser(userId: string, updates: Partial<AdminUser>) {
-    // Get the current session token
-    const { data: { session } } = await supabase.auth.getSession();
-    const accessToken = session?.access_token;
+  // Get the current session token
+  const { data: { session } } = await supabase.auth.getSession();
+  const accessToken = session?.access_token;
 
-    try {
-      const res = await fetch('/api/admin/users', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': accessToken ? `Bearer ${accessToken}` : '',
-        },
-        body: JSON.stringify({ id: userId, ...updates }),
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: 'Request failed' }));
-        throw new Error(errData.error || 'Request failed');
-      }
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error);
-      setAdminUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, ...data.user } : u))
-      );
-    } catch (err: any) {
-      alert(err.message);
+  try {
+    const res = await fetch('/api/admin/users', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken ? `Bearer ${accessToken}` : '',
+      },
+      body: JSON.stringify({ id: userId, ...updates }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({ error: 'Request failed' }));
+      throw new Error(errData.error || 'Request failed');
     }
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    setAdminUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, ...data.user } : u))
+    );
+  } catch (err: any) {
+    alert(err.message);
   }
+}
 
-  async function loadReservations() {
+async function deleteUser(userId: string) {
+  if (!confirm('Delete this user? This cannot be undone.')) return;
+  try {
+    const token = (await supabase.auth.getSession()).data.session?.access_token;
+    const res = await fetch(`/api/admin/users?id=${userId}`, {
+      method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Failed to delete user');
+    setAdminUsers((prev) => prev.filter((u) => u.id !== userId));
+  } catch (err: any) {
+    alert(err.message);
+  }
+}
+
+async function loadReservations() {
     setReservationsLoading(true);
     try {
       const token = (await supabase.auth.getSession()).data.session?.access_token;
@@ -673,12 +689,20 @@ export default function AdminPage() {
                         </button>
                       </td>
                       <td className="px-6 py-3">
-                        <button
-                          onClick={() => setTab('loans')}
-                          className="text-blue-600 hover:underline flex items-center gap-1"
-                        >
-                          <Eye className="h-3 w-3" /> View Loans
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setTab('loans')}
+                            className="text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            <Eye className="h-3 w-3" /> View Loans
+                          </button>
+                          <button
+                            onClick={() => deleteUser(u.id)}
+                            className="text-red-600 hover:text-red-800 hover:underline flex items-center gap-1 font-medium"
+                          >
+                            <Trash2 className="h-3 w-3" /> Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -193,5 +193,22 @@ export async function PUT(request: NextRequest) {
       .eq('id', loan.book_id);
   }
 
+  // After returning, set next pending reservation (if any) to 'ready'
+  const { data: nextRes, error: nextResError } = await supabase
+    .from('reservations')
+    .select('id')
+    .eq('book_id', loan.book_id)
+    .eq('status', 'pending')
+    .order('reservation_date', { ascending: true })
+    .limit(1)
+    .single();
+
+  if (!nextResError && nextRes) {
+    await supabase
+      .from('reservations')
+      .update({ status: 'ready' })
+      .eq('id', nextRes.id);
+  }
+
   return NextResponse.json({ success: true, loan: data });
 }

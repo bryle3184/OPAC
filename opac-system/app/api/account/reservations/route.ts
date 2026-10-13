@@ -147,3 +147,26 @@ export async function PUT(request: NextRequest) {
 
   return NextResponse.json({ success: true, reservation: data });
 }
+
+/**
+ * DELETE /api/account/reservations — delete a reservation.
+ * Used after a patron successfully books a ready reservation.
+ */
+export async function DELETE(request: NextRequest) {
+  const { user, response, token } = await requireAuth(request);
+  if (response) return response;
+
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  if (!id) {
+    return NextResponse.json({ success: false, error: 'Missing reservation id' }, { status: 400 });
+  }
+
+  const supabase = clientFor(token!);
+  const { error } = await supabase.from('reservations').delete().eq('id', id).eq('user_id', user!.id);
+  if (error) {
+    console.error('Reservation delete error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ success: true });
+}

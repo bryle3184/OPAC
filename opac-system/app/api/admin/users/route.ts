@@ -73,3 +73,29 @@ export async function PUT(request: NextRequest) {
 
   return NextResponse.json({ success: true, user: data });
 }
+
+export async function DELETE(request: NextRequest) {
+  const auth = await requireAdmin(request);
+  if (auth.response) return auth.response;
+
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  if (!id) {
+    return NextResponse.json({ success: false, error: 'Missing user id' }, { status: 400 });
+  }
+
+  // Prevent admin from deleting themselves
+  if (auth.user && id === auth.user.id) {
+    return NextResponse.json({ success: false, error: 'Cannot delete your own account' }, { status: 400 });
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin.from('user_profiles').delete().eq('id', id);
+
+  if (error) {
+    console.error('User delete error:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}

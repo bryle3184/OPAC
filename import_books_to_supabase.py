@@ -27,7 +27,7 @@ def import_books():
             # Clean data to match schema
             data = {
                 "title": book.get("title"),
-                "author": [book.get("author")] if book.get("author") else [],
+                "author": book.get("author"),
                 "isbn": book.get("isbn"),
                 "format": "book",
                 "published_year": int(book.get("publication_year")) if book.get("publication_year") else None,
