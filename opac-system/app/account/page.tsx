@@ -152,6 +152,40 @@ export default function AccountPage() {
   };
 
   const handleCancelReservation = async (reservationId: string) => {
+    // existing code unchanged
+  };
+
+  // Book Now: create a loan from a ready reservation
+  const handleBookNow = async (reservation: any) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      // Create loan for the reserved book
+      const loanRes = await fetch('/api/account/loans', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ book_id: reservation.book?.id }),
+      });
+      const loanResult = await loanRes.json();
+      if (loanResult.success && loanResult.loan) {
+        // Optimistically update UI: add loan and mark reservation cancelled
+        setData(prev => prev ? {
+          ...prev,
+          loans: [...prev.loans, loanResult.loan],
+          reservations: prev.reservations.map((r: any) =>
+            r.id === reservation.id ? { ...r, status: 'cancelled' } : r
+          ),
+        } : prev);
+      } else {
+        alert(loanResult.error || 'Failed to book the reservation');
+      }
+    } catch {
+      alert('Network error');
+    }
+  };
     if (!confirm('Cancel this reservation?')) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -407,6 +441,14 @@ export default function AccountPage() {
                         className="text-sm text-red-600 hover:text-red-700 font-medium"
                       >
                         Cancel
+                      </button>
+                    )}
+                    {res.status === 'ready' && (
+                      <button
+                        onClick={() => handleBookNow(res)}
+                        className="text-sm text-green-600 hover:text-green-700 font-medium"
+                      >
+                        Book Now
                       </button>
                     )}
                   </div>
