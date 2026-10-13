@@ -163,11 +163,15 @@ export default function AccountPage() {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers.Authorization = `Bearer ${token}`;
 
-      // Create loan for the reserved book
+      const bookId = reservation.book?.id ?? reservation.book_id;
+      if (!bookId) {
+        alert('Unable to determine book ID for reservation');
+        return;
+      }
       const loanRes = await fetch('/api/account/loans', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ book_id: reservation.book?.id }),
+        body: JSON.stringify({ book_id: bookId }),
       });
       const loanResult = await loanRes.json();
       if (loanResult.success && loanResult.loan) {
@@ -186,34 +190,7 @@ export default function AccountPage() {
       alert('Network error');
     }
   };
-    if (!confirm('Cancel this reservation?')) return;
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers.Authorization = `Bearer ${token}`;
-
-      const res = await fetch('/api/account/reservations', {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ id: reservationId, status: 'cancelled' }),
-      });
-      const result = await res.json();
-      if (result.success && result.reservation) {
-        setData(prev => prev ? {
-          ...prev,
-          reservations: prev.reservations.map((r: any) =>
-            r.id === reservationId ? result.reservation : r
-          ),
-        } : prev);
-      } else {
-        alert(result.error || 'Failed to cancel reservation');
-      }
-    } catch {
-      alert('Network error');
-    }
-  };
-
+    
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     window.location.href = '/';
