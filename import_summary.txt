@@ -1,0 +1,38 @@
+OPAC Book Catalog Import Summary
+==================================================
+Import Date: 2026-10-10 13:04:53
+Total Books: 25
+
+Books by Decade:
+  1970s: 4 books
+  1980s: 4 books
+  1990s: 4 books
+  2000s: 8 books
+  2010s: 4 books
+
+Book List:
+ 1. Counseling Psychology: Educational Publishing House.,... - De Jesus, Evangeline M. (2006)
+ 2. Guide to the use of Libraries and information sources: Raque... - Gates, Jean Key (1983)
+ 3. Lament for a notion: The life and death of Canada's bilingua... - Reid, Scott (1993)
+ 4. Consequences: The Candian Publishers.,... - Trudeau, Margaret (1982)
+ 5. Leadership and personality development for tourism and hospi... - Rodolfa Jr., Bernardo B. (2011)
+ 6. You cant make this stuff up: Da Capo Press .,... - Gutkind, Lee (2012)
+ 7. The Antigonish Review... - MacSween, R.J. (1970)
+ 8. Tao: A new way of thinking... - Chung-yuan, Chang (1975)
+ 9. How to Stop Worrying and Start Living: Simon & Schuster.,... - Carnegle, Dale. (2004)
+10. Not wanted on the voyage: Pebble Productions Inc.,... - Findley, Timothy (1984)
+11. The Bronfman Dynasty: the Rothschilds of the New World... - Newman, Peter C. (1978)
+12. Reflections on a mountain summer: The Canadian Publishers.,... - Glass, Joanna M. (1974)
+13. The Stone Carvers: The Canadian Publishers.,... - Urquhart, Jane (2002)
+14. The roaring girl: stories... - Hollingshead, Greg (1997)
+15. Black Elk Speaks: Being the Life Story of a Holy Man... - Sioux, Oglala (2000)
+16. Seeds of Terror: An Eyewitness Account of Al-Qaeda's Newest ... - Ressa, Maria (2003)
+17. The Blooding... - Wambaugh, Joseph (1989)
+18. Common Grounds: Asian Center for Womens Human Rights (Ascen... - Sajor, Indai Lourdes. (None)
+19. Engaging non-state actors in a landmine ban: International C... - Unknown (2000)
+20. Keepers of the Forest: Land Management Alternatives in South... - Poffenberger, Mark (1990)
+21. Tari: University of the Philippines Press.,... - Custodio, Sergio R. Jr. (2000)
+22. Alternative scriptwriting : successfully breaking the rules... - Dancyger, Ken (2007)
+23. FVR XYZ files : an anthology of controversies & issues, anec... - Velasco, Melandrew T (2017)
+24. Dream sketches: Anvil Publishing, Inc.,... - Lanot, Marra PL. (1991)
+25. Room for maneuver : social sector policy reform in the Phili... - Fabella, Raul (2014)

@@ -1,0 +1,21 @@
+HTTP/1.1 400 Bad Request
+Date: Sun, 11 Oct 2026 11:45:00 GMT
+Content-Type: application/json
+Content-Length: 99
+Connection: keep-alive
+CF-Ray: a48d9db479eb20f1-HKG
+CF-Cache-Status: DYNAMIC
+Server: cloudflare
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Vary: Origin
+sb-gateway-version: 2
+sb-project-ref: qhcdpkplwnkjqpcbrjvs
+sb-request-id: 01a12ac7-cde1-7822-8192-535fcb0b64fd
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 56
+x-sb-error-code: validation_failed
+set-cookie: __cf_bm=xLE_YbasjKhSuK.HyTySfVFnTEiLd1ammbcOPl3r7Bo-1791719099.5931582-1.0.1.1-otOCxMiIIMtzKzSCr1diq0MCGKXZgV_zlfi0x1OsgNICDKDg5pxzb3zscMA0GY9HqEyi5aIIQ4CoP6gMuYYuNMMW84krsn4Wk7lsJsvc2dw__._Srlgm_FpreV5kPZS6; HttpOnly; SameSite=None; Secure; Path=/; Domain=supabase.co; Expires=Sun, 11 Oct 2026 12:15:00 GMT
+alt-svc: h3=":443"; ma=86400
+
+{"code":400,"error_code":"validation_failed","msg":"Unsupported provider: provider is not enabled"}

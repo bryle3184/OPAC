@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/*
+ * Tailwind v4 ships a washed-out gray palette (#6a7282 for gray-500) that fails
+ * WCAG 4.5:1 contrast against white. Override the three most-used text shades
+ * in the global root so every page inherits legible values without touching
+ * hundreds of component class lists. Keep icon/placeholder grays untouched so
+ * decorative elements stay subtle.
+ */
+@theme inline {
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-gray-400: #6b7280; /* neutral placeholder / icon tint */
+  --color-gray-500: #4b5563; /* body text — passes contrast on white */
+  --color-gray-600: #374151; /* stronger accents / labels */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
